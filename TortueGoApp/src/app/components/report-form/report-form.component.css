@@ -1,0 +1,20 @@
+.full-width {
+  width: 100%;
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.file-name {
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+mat-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
