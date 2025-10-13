@@ -1,0 +1,30 @@
+.map-container {
+  position: relative;
+  height: calc(100vh - 64px); 
+}
+
+.map-frame {
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+}
+
+.fab-button {
+  position: absolute !important;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+}
+
+::ng-deep .popup-content {
+  img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  p {
+    margin: 0;
+  }
+}

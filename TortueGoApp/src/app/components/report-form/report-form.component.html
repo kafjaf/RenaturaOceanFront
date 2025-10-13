@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>Signaler une observation</h1>
+<div mat-dialog-content>
+  <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+
+    <div class="file-input-container">
+      <button type="button" mat-stroked-button (click)="fileInput.click()">
+        <mat-icon>photo_camera</mat-icon>
+        Choisir une photo
+      </button>
+      <input hidden #fileInput type="file" accept="image/*" (change)="onFileSelected($event)">
+      <span class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close(false)">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="reportForm.invalid || isLoading">
+    <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+    <span *ngIf="!isLoading">Envoyer</span>
+  </button>
+</div>
