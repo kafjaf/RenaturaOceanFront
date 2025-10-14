@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ObersationServiceService } from './obersation-service.service';
+import { ObersationServiceService } from './obersation.service';
 
 describe('ObersationServiceService', () => {
   let service: ObersationServiceService;

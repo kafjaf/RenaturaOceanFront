@@ -3,7 +3,7 @@ import { ObservationDto } from '../../models/observation.dto';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ObersationServiceService } from '../../services/obersation-service.service';
+import { ObersationServiceService } from '../../services/obersation.service';
 import { MatIcon } from '@angular/material/icon';
 import { ReportFormComponent } from '../report-form/report-form.component';
 
