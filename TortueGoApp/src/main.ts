@@ -6,6 +6,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { Dexie } from 'dexie'; // <-- IMPORT DE DEXIE
 
 import { AppComponent } from './app/app.component';
+import { isDevMode } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 
 // 1. Créez une classe pour votre base de données
 export class TortueGoDB extends Dexie {
@@ -26,7 +28,10 @@ export const db = new TortueGoDB();
 bootstrapApplication(AppComponent, {
   providers: [
     provideAnimations(),
-    provideHttpClient()
+    provideHttpClient(), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
     // Plus besoin de NgxIndexedDBModule !
   ],
 }).catch((err) => console.error(err));
