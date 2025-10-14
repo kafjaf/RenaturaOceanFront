@@ -1,9 +1,12 @@
+// src/app/components/map-view/map-view.component.ts
+
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ObservationDto } from '../../models/observation.dto';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ObersationServiceService } from '../../services/obersation-service.service';
+import { ObservationService } from '../../services/observation.service'; // <-- LIGNE CORRIGÉE
 import { MatIcon } from '@angular/material/icon';
 import { ReportFormComponent } from '../report-form/report-form.component';
 
@@ -22,10 +25,10 @@ L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
   selector: 'app-map-view',
-  standalone : true,
-  imports: [MatIcon],
+  standalone: true,
+  imports: [CommonModule, MatIcon, ReportFormComponent], // <-- IMPORTS AJOUTÉS
   templateUrl: './map-view.component.html',
-  styleUrl: './map-view.component.css'
+  styleUrl: './map-view.component.css' // <-- CHANGÉ DE .scss À .css AU CAS OÙ
 })
 export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -33,14 +36,12 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   private observations: ObservationDto[] = [];
   private observationSub!: Subscription;
 
-    constructor(
+  constructor(
     public dialog: MatDialog,
-    private observationService: ObersationServiceService
+    private observationService: ObservationService // <-- LIGNE CORRIGÉE
   ) {}
 
-
-   ngOnInit(): void {
-    // S'abonne à l'événement de création pour rafraîchir la carte
+  ngOnInit(): void {
     this.observationSub = this.observationService.observationCreated$.subscribe(() => {
       this.loadObservations();
     });
@@ -70,21 +71,19 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadObservations(): void {
-    this.observationService.getObservations().subscribe(data => {
+    this.observationService.getObservations().subscribe((data: ObservationDto[]) => { // <-- TYPE AJOUTÉ
       this.observations = data;
       this.renderMarkers();
     });
   }
 
   private renderMarkers(): void {
-    // Nettoyer les anciens marqueurs (si nécessaire)
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker) {
         this.map.removeLayer(layer);
       }
     });
 
-    // Ajouter les nouveaux marqueurs
     this.observations.forEach(obs => {
       const marker = L.marker([obs.latitude, obs.longitude]);
       const popupContent = `
@@ -108,9 +107,6 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
             longitude: position.coords.longitude,
           },
         });
-        
-        // La magie opère ici : le rafraîchissement est géré par le service
-        // via `observationCreated$` pour découpler les composants.
       },
       error => {
         console.error('Erreur de géolocalisation', error);

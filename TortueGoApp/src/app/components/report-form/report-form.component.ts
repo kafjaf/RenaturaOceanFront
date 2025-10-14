@@ -1,8 +1,10 @@
+// src/app/components/report-form/report-form.component.ts
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ObersationServiceService } from '../../services/obersation-service.service';
+import { ObservationService } from '../../services/observation.service'; // <-- LIGNE CORRIGÉE
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -36,7 +38,7 @@ export class ReportFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private observationService: ObersationServiceService,
+    private observationService: ObservationService, // <-- LIGNE CORRIGÉE
     public dialogRef: MatDialogRef<ReportFormComponent>,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: { latitude: number; longitude: number }
@@ -82,5 +84,4 @@ export class ReportFormComponent implements OnInit {
       },
     });
   }
-
 }
