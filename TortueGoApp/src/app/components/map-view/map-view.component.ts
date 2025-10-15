@@ -1,16 +1,19 @@
-// src/app/components/map-view/map-view.component.ts
-
+// ...existing code...
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ObservationDto } from '../../models/observation.dto';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { ObservationService } from '../../services/observation.service'; // <-- LIGNE CORRIGÉE
-import { MatIcon } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ObservationService } from '../../services/observation.service';
+import { FilterService, FilterCriteria } from '../../services/filter.service';
 import { ReportFormComponent } from '../report-form/report-form.component';
+import { ObservationDto } from '../../models/observation.dto';
 
-// Correction pour l'icône par défaut de Leaflet
+import 'leaflet.heat';
+
+// ...iconDefault et L.Marker prototype...
 const iconDefault = L.icon({
   iconRetinaUrl: 'assets/marker-icon-2x.png',
   iconUrl: 'assets/marker-icon.png',
@@ -21,29 +24,37 @@ const iconDefault = L.icon({
   tooltipAnchor: [16, -28],
   shadowSize: [41, 41]
 });
-L.Marker.prototype.options.icon = iconDefault;
+;(L as any).Marker.prototype.options.icon = iconDefault;
 
 @Component({
   selector: 'app-map-view',
   standalone: true,
-  imports: [CommonModule, MatIcon, ReportFormComponent], // <-- IMPORTS AJOUTÉS
+  imports: [CommonModule, MatIconModule, MatSlideToggleModule, MatDialogModule],
   templateUrl: './map-view.component.html',
-  styleUrl: './map-view.component.css' // <-- CHANGÉ DE .scss À .css AU CAS OÙ
+  styleUrls: ['./map-view.component.css']
 })
 export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
-
   private map!: L.Map;
   private observations: ObservationDto[] = [];
   private observationSub!: Subscription;
+  private filterSub!: Subscription;
+  private heatLayer?: any;
+  isHeatmapActive = false;
 
   constructor(
     public dialog: MatDialog,
-    private observationService: ObservationService // <-- LIGNE CORRIGÉE
+    private observationService: ObservationService,
+    private filterService: FilterService
   ) {}
 
   ngOnInit(): void {
     this.observationSub = this.observationService.observationCreated$.subscribe(() => {
       this.loadObservations();
+    });
+
+    // typage explicite pour éviter implicit any
+    this.filterSub = this.filterService.filter$.subscribe((criteria: FilterCriteria) => {
+      this.applyFilter(criteria);
     });
   }
 
@@ -53,59 +64,107 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.observationSub.unsubscribe();
+    this.observationSub?.unsubscribe();
+    this.filterSub?.unsubscribe();
+    if (this.map) this.map.remove();
   }
 
   private initMap(): void {
-    this.map = L.map('map', {
-      center: [-4.783333, 11.866667], // Centre sur Pointe-Noire
-      zoom: 13,
-    });
-
+    this.map = L.map('map', { center: [-4.783333, 11.866667], zoom: 13 });
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      attribution: '&copy; OpenStreetMap'
     });
     tiles.addTo(this.map);
   }
 
   private loadObservations(): void {
-    this.observationService.getObservations().subscribe((data: ObservationDto[]) => { // <-- TYPE AJOUTÉ
-      this.observations = data;
-      this.renderMarkers();
+    this.observationService.getObservations().subscribe((data: ObservationDto[]) => {
+      this.observations = data || [];
+      this.renderMarkers(this.observations);
+    }, err => {
+      console.error('Erreur getObservations', err);
+      this.observations = [];
+      this.renderMarkers([]);
     });
   }
 
-  private renderMarkers(): void {
-    this.map.eachLayer(layer => {
-      if (layer instanceof L.Marker) {
-        this.map.removeLayer(layer);
-      }
+  private renderMarkers(data: ObservationDto[] = this.observations): void {
+    if (!this.map) return;
+
+    (this.map as any).eachLayer((layer: any) => {
+      if (layer instanceof L.Marker) this.map.removeLayer(layer);
     });
 
-    this.observations.forEach(obs => {
-      const marker = L.marker([obs.latitude, obs.longitude]);
+    for (const obs of data) {
+      const lat = obs.latitude !== undefined ? parseFloat(String(obs.latitude)) : NaN;
+      const lng = obs.longitude !== undefined ? parseFloat(String(obs.longitude)) : NaN;
+      if (Number.isNaN(lat) || Number.isNaN(lng)) continue;
+
+      const marker = L.marker([lat, lng], { icon: iconDefault });
+      const confidence = (typeof obs.speciesConfidence === 'number') ? (obs.speciesConfidence * 100) : 0;
+      const speciesInfo = obs.species
+        ? `<strong>Espèce :</strong> ${obs.species}<br><i>(Confiance : ${confidence.toFixed(0)}%)</i>`
+        : '<em>Espèce non identifiée</em>';
+
+      const photoHtml = obs.photoUrl ? `<img src="${obs.photoUrl}" alt="Observation de tortue" width="150">` : '';
       const popupContent = `
         <div class="popup-content">
-          <img src="${obs.photoUrl}" alt="Observation de tortue" width="150">
+          ${photoHtml}
           <p>${obs.description || 'Aucune description'}</p>
+          <hr>
+          <p>${speciesInfo}</p>
         </div>
       `;
       marker.bindPopup(popupContent);
       marker.addTo(this.map);
-    });
+    }
+  }
+
+  private applyFilter(criteria: FilterCriteria): void {
+    if (!this.observations.length) return;
+    let filtered = [...this.observations];
+
+    if (criteria.species && criteria.species !== 'all') {
+      filtered = filtered.filter(obs => obs.species === criteria.species);
+    }
+
+    if (criteria.dateRange && criteria.dateRange.start && criteria.dateRange.end) {
+      const start = new Date(criteria.dateRange.start);
+      const end = new Date(criteria.dateRange.end);
+      filtered = filtered.filter(obs => {
+        const observed = obs.observedAt ? new Date(obs.observedAt) : null;
+        if (!observed || isNaN(observed.getTime())) return false;
+        return observed >= start && observed <= end;
+      });
+    }
+
+    this.renderMarkers(filtered);
+  }
+
+  toggleHeatmap(isActive: boolean): void {
+    this.isHeatmapActive = isActive;
+
+    if (isActive) {
+      const heatData = this.observations.map(obs => [parseFloat(String(obs.latitude)), parseFloat(String(obs.longitude)), 0.5]);
+      this.heatLayer = (L as any).heatLayer(heatData, { radius: 25, blur: 15 });
+      this.heatLayer.addTo(this.map);
+    } else {
+      if (this.heatLayer) this.map.removeLayer(this.heatLayer);
+      this.renderMarkers();
+    }
   }
 
   openReportDialog(): void {
     navigator.geolocation.getCurrentPosition(
       position => {
-        const dialogRef = this.dialog.open(ReportFormComponent, {
+        this.dialog.open(ReportFormComponent, {
           width: '400px',
           data: {
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
+            longitude: position.coords.longitude
+          }
         });
       },
       error => {
@@ -115,3 +174,4 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 }
+// ...existing code...
