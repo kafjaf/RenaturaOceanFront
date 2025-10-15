@@ -7,6 +7,7 @@ export interface ObservationDto {
   photoUrl: string;
   description?: string;
   species?: string;
+  speciesConfidence?: number; // <-- AJOUTEZ CETTE LIGNE
   observedAt: string; // Les dates sont généralement transmises comme des chaînes de caractères au format ISO
 }
 /*id: string : Le type Guid de C# est sérialisé en une string en JSON.

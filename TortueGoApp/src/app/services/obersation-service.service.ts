@@ -6,7 +6,7 @@ import { ObservationDto } from '../models/observation.dto';
 @Injectable({
   providedIn: 'root'
 })
-export class ObersationServiceService {
+export class ObservationService {
 
    // Remplacez par l'URL de votre API .NET déployée sur Render
   private readonly apiUrl = 'https://tortuego-api.onrender.com/api/observations';

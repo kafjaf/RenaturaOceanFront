@@ -1,4 +1,24 @@
 <mat-toolbar color="primary">
-  <mat-icon>eco</mat-icon>
-  <span>TortueGo</span>
+  <span>
+    <mat-icon>pets</mat-icon>
+    <span class="app-title">TortueGo</span>
+  </span>
+
+  <span class="spacer"></span>
+
+  <mat-form-field appearance="outline" class="filter-select">
+    <mat-label>Filtrer par espèce</mat-label>
+    <mat-select (selectionChange)="onSpeciesChange($event.value)">
+      <mat-option value="all">Toutes les espèces</mat-option>
+      <mat-option value="Tortue Luth">Tortue Luth</mat-option>
+      <mat-option value="Tortue Verte">Tortue Verte</mat-option>
+      <mat-option value="Tortue Imbriquée">Tortue Imbriquée</mat-option>
+      <mat-option value="undefined">Non identifiée</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-slide-toggle
+    (change)="onToggleHeatmapChange($event)"
+    label="Vue Heatmap">
+  </mat-slide-toggle>
 </mat-toolbar>

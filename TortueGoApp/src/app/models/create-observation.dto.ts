@@ -1,8 +1,13 @@
-// src/app/models/create-observation.dto.ts
+// src/app/models/observation.dto.ts
 
-export interface CreateObservationDto {
+export interface ObservationDto {
+  id: string;
   latitude: number;
   longitude: number;
+  photoUrl: string;
   description?: string;
-  photo: File; // Le fichier image provenant de l'input HTML
+  observedAt: string;
+  // --- NOUVEAUX CHAMPS ---
+  species?: string;        // Ex: "Tortue Luth", "Tortue Verte", etc.
+  speciesConfidence?: number; // Ex: 0.95 (pour 95% de confiance)
 }

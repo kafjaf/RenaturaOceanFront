@@ -1,9 +1,16 @@
 <div class="map-container">
+  <!-- Conteneur de la carte -->
   <div class="map-frame">
     <div id="map"></div>
   </div>
 
+  <!-- Bouton flottant pour ajouter une observation -->
   <button mat-fab color="accent" class="fab-button" (click)="openReportDialog()">
     <mat-icon>add_location</mat-icon>
   </button>
+
+  <!-- Overlay de chargement qui s'affiche par-dessus de la carte -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner mode="indeterminate"></mat-spinner>
+  </div>
 </div>
