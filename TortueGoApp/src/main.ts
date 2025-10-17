@@ -35,6 +35,5 @@ bootstrapApplication(AppComponent, {
             enabled: !isDevMode(),
             registrationStrategy: 'registerWhenStable:30000'
           })
-    // Plus besoin de NgxIndexedDBModule !
   ],
 }).catch((err) => console.error(err));

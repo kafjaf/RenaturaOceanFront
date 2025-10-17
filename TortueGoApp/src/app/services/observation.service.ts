@@ -12,7 +12,7 @@ import { db } from '../../main'; // <-- IMPORT DE NOTRE INSTANCE DB
   providedIn: 'root'
 })
 export class ObservationService {
-  private readonly apiUrl = 'https://VOTRE_API_SUR_RENDER/api/observations';
+  private readonly apiUrl = 'https://localhost:7213/api/observations';
   private _observationCreated$ = new Subject<void>();
 
   constructor(
@@ -36,9 +36,13 @@ export class ObservationService {
     }
   }
 
-  createObservationOnline(formData: FormData): Observable<ObservationDto> {
+   createObservationOnline(formData: FormData): Observable<ObservationDto> {
     return this.http.post<ObservationDto>(this.apiUrl, formData).pipe(
-      tap(() => this._observationCreated$.next())
+      tap(() => {
+        // AJOUTEZ CE LOG
+        console.log('%c[ObservationService] Signal "observationCreated" ENVOYÉ !', 'color: green; font-weight: bold;');
+        this._observationCreated$.next();
+      })
     );
   }
 

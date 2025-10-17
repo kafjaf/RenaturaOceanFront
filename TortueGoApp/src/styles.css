@@ -2,3 +2,136 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+/* =============================================== */
+/* Styles globaux pour les popups Leaflet          */
+/* =============================================== */
+
+/* Cible le conteneur du popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+  padding: 0 !important;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Cible le contenu pour fixer la largeur */
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 250px !important; /* Largeur fixe, c'est la clé ! */
+}
+
+/* Notre classe personnalisée pour le contenu du popup */
+.popup-content {
+  padding: 0;
+
+  img {
+    width: 100%; /* Prend 100% de 250px */
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  p {
+    margin: 0;
+    padding: 12px;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+  padding: 0 !important;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Cible le contenu à l'intérieur pour enlever les marges par défaut */
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 250px !important; /* Largeur fixe pour le popup, crucial pour le mobile */
+}
+
+/* Notre classe personnalisée pour le contenu */
+.popup-content {
+  padding: 0; /* Pas de padding ici, on le gère par élément */
+
+  img {
+    width: 100%; /* Prend 100% de la largeur du conteneur (250px) */
+    height: 150px; /* Hauteur fixe pour un look uniforme */
+    object-fit: cover; /* L'image remplit la zone sans se déformer */
+    display: block; /* Enlève les espaces indésirables sous l'image */
+    border-top-left-radius: 8px; /* Arrondit les coins supérieurs */    
+    border-top-right-radius: 8px;
+    background-color: #e0e0e0;
+  }
+
+  p {
+    margin: 0;
+    padding: 12px; /* Un peu d'espace autour du texte */
+    font-size: 14px;
+    color: #212121;
+    text-align: center;
+  }
+}
+
+/* === Styles pour le marqueur === */
+.custom-marker-icon {
+  background-color: #3f51b5; /* Couleur primaire d'Angular Material (Indigo) */
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* Définit la couleur de l'icône-fonte */
+}
+
+/* Cible l'icône Material Icon à l'intérieur du marqueur */
+.custom-marker-icon .material-icons {
+  font-size: 22px; /* Contrôle la taille de l'icône */
+  /* Pas besoin de 'fill', la couleur est héritée */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(63, 81, 181, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0);
+  }
+}
+
+.pulsing-marker {
+  animation: pulse 1.5s infinite;
+}
+
+/* Styles pour l'info de l'espèce dans le popup */
+.species-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #e8f5e9; /* Un vert clair */
+  color: #2e7d32; /* Un vert foncé */
+  font-size: 13px;
+  border-top: 1px solid #c8e6c9;
+  border-bottom: 1px solid #c8e6c9;
+}
+
+.species-info .material-icons {
+  font-size: 18px;
+}
