@@ -1,0 +1,28 @@
+/* Utiliser Flexbox pour créer une grille de cartes */
+.card-grid {
+  display: flex;
+  flex-wrap: wrap; /* Permet aux cartes d'aller à la ligne */
+  gap: 20px; /* Espacement entre les cartes */
+  padding: 20px;
+  justify-content: center; /* Centre les cartes */
+}
+
+/* Style pour chaque carte */
+.animal-card {
+  width: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+  border-radius: 12px;
+}
+
+/* Effet au survol de la souris */
+.animal-card:hover {
+  transform: translateY(-5px); /* La carte lève légèrement */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée */
+  cursor: pointer;
+}
+
+/* Style pour l'image de la carte */
+.animal-card img {
+  height: 180px;
+  object-fit: cover; /* S'assure que l'image couvre bien l'espace sans se déformer */
+}

@@ -1,6 +1,6 @@
 // src/app/components/toolbar.component.ts
 
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core'; // <-- AJOUT DE Output & EventEmitter
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,20 +25,24 @@ import { FilterService } from '../../services/filter.service';
 })
 export class ToolbarComponent {
 
-  // Crée un événement que le composant parent pourra écouter
+  // On crée un "événement" nommé 'toggleHeatmap' que le composant parent pourra écouter.
   @Output() toggleHeatmap = new EventEmitter<boolean>();
 
   constructor(private filterService: FilterService) {}
 
+  /**
+   * Méthode appelée lorsque l'utilisateur change l'espèce dans le menu déroulant.
+   */
   onSpeciesChange(species: string): void {
     this.filterService.setSpeciesFilter(species);
   }
 
   /**
-   * Méthode appelée lorsque l'utilisateur change l'interrupteur de la heatmap.
-   * Elle émet la nouvelle valeur (true ou false).
+   * NOUVELLE méthode appelée lorsque l'utilisateur change l'interrupteur de la heatmap.
+   * @param event L'événement émis par le mat-slide-toggle, qui contient la valeur 'checked'.
    */
   onToggleHeatmapChange(event: any): void {
+    // On émet la nouvelle valeur (true ou false) à travers l'événement 'toggleHeatmap'.
     this.toggleHeatmap.emit(event.checked);
   }
 }

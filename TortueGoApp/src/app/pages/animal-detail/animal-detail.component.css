@@ -1,0 +1,11 @@
+.detail-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.animal-img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}

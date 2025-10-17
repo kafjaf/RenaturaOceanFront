@@ -1,7 +1,9 @@
 <main>
+  <router-outlet></router-outlet>
   <!-- L'événement (toggleHeatmap) émis par <app-toolbar> est maintenant connecté à la méthode onToggleHeatmap de ce composant -->
   <app-toolbar (toggleHeatmap)="onToggleHeatmap($event)"></app-toolbar>
   
   <!-- Le composant de la carte -->
   <app-map-view></app-map-view>
+ 
 </main>

@@ -1,0 +1,18 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #e8f4f2;
+}
+
+.hero-card {
+  max-width: 350px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+mat-card-content {
+  text-align: center;
+}
