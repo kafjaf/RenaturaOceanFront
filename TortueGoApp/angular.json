@@ -13,29 +13,31 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tortue-go-app",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": [
-              "node_modules/leaflet/dist/leaflet.css", 
-              "@angular/material/prebuilt-themes/purple-green.css",
-              "node_modules/leaflet.markercluster/dist/MarkerCluster.css", 
-              "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css", 
-              "src/styles.css"
-            ],
-            "scripts": []
-            
-          },
+              "outputPath": "dist/tortue-go-app",
+              "index": "src/index.html",
+              "browser": "src/main.ts",
+              "polyfills": [
+                "zone.js"
+              ],
+              "tsConfig": "tsconfig.app.json",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                }
+              ],
+              "styles": [
+                "node_modules/leaflet/dist/leaflet.css", 
+                "@angular/material/prebuilt-themes/purple-green.css",
+                "node_modules/leaflet.markercluster/dist/MarkerCluster.css", 
+                "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css", 
+                "src/styles.css"
+              ],
+              "scripts": [],
+              "allowedCommonJsDependencies": [
+                "leaflet.markercluster"
+              ]
+            },
           "configurations": {
             "production": {
               "budgets": [
