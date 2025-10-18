@@ -8,6 +8,11 @@ import { ObservationService } from '../../services/observation.service'; // <-- 
 import { MatIcon } from '@angular/material/icon';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import 'leaflet.markercluster'; // <-- AJOUTEZ CET IMPORT pour activer le plugin
+import { SpeciesData } from '../../models/species.model';
+import { SpeciesInfoComponent } from '../species-info/species-info.component';
+import { SPECIES_DB } from '../../data/species.db';
+
+
 
 // Correction pour l'icône par défaut de Leaflet
 const iconDefault = L.icon({
@@ -30,6 +35,29 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrl: './map-view.component.css' // <-- CHANGÉ DE .scss À .css AU CAS OÙ
 })
 export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
+
+   // NOUVELLE MÉTHODE pour ouvrir la modale
+      // openSpeciesInfo(speciesName: string): void {
+      //   const speciesData = SPECIES_DB[speciesName] || SPECIES_DB['Turtle']; // Fallback
+
+      //   if (speciesData) {
+      //     this.dialog.open(SpeciesInfoComponent, {
+      //       width: '450px',
+      //       data: speciesData
+      //     });
+      //   }
+      // }
+
+       openSpeciesInfo(speciesKey: string): void { // La méthode reçoit maintenant la clé
+    const speciesDataToShow = SPECIES_DB[speciesKey]; // On cherche directement avec la clé
+
+    if (speciesDataToShow) {
+      this.dialog.open(SpeciesInfoComponent, {
+        width: '450px',
+        data: speciesDataToShow // On envoie l'objet complet à la modale
+      });
+    }
+  }
 
   private map!: L.Map;
   private observations: ObservationDto[] = [];
@@ -62,11 +90,33 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initMap(): void {
+    // 1. Définir nos différentes couches de base (base layers)
+    const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
+    });
+
+        // NOUVEAU : La couche de vue satellite de Esri (excellente qualité et gratuite)
+    const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      maxZoom: 18
+    });
+
+     // 2. Initialiser la carte
     this.map = L.map('map', {
       center: [-4.783333, 11.866667], // Centre sur Pointe-Noire
       zoom: 13,
+      layers: [streetMap] // MODIFIÉ : La couche par défaut est la vue "Plan"
     });
 
+        // 3. Créer l'objet qui sera utilisé par le contrôle des couches
+    const baseMaps = {
+      "Vue Plan": streetMap,
+      "Vue Satellite": satelliteMap
+    };
+    L.control.layers(baseMaps).addTo(this.map); // Ajouter le contrôle des couches à la carte
+
+     // 4. Ajouter la couche de tuiles OpenStreetMap
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
@@ -100,6 +150,7 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   
 
     this.observations.forEach((obs, index) => {
+      console.log(`Clé reçue de l'API pour l'observation ${obs.id}: `, obs.species);
       // Création de l'icône personnalisée avec L.divIcon
       const iconHtml = `<i class="material-icons">pets</i>`; // Utilisez 'pets', 'eco', ou une autre icône pertinente
 
@@ -113,22 +164,49 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const marker = L.marker([obs.latitude, obs.longitude], { icon: customIcon });
 
-      const speciesHtml = obs.species
+      // ---- Reconstruction complète et propre du contenu du popup ----
+      const speciesData = obs.species ? SPECIES_DB[obs.species] : null;
+      const speciesLinkId = `species-link-${obs.id}`;
+
+      const speciesHtml = speciesData
         ? `<div class="species-info">
              <i class="material-icons">verified</i>
-             <span>Espèce identifiée : <strong>${obs.species}</strong></span>
+             <span>Espèce : <a href="#" id="${speciesLinkId}" class="species-link">${speciesData.name}</a></span>
            </div>`
-        : ''; // Si species est null, on n'affiche rien
+        : '';
+      
+      const threatHtml = obs.threatType && obs.threatType !== 'Aucune'
+        ? `<div class="threat-info">
+             <i class="material-icons">warning</i>
+             <span>Menace : <strong>${obs.threatType}</strong></span>
+           </div>`
+        : '';
 
-
+      const descriptionHtml = `<p>${obs.description || 'Aucune description'}</p>`;
+      
       const popupContent = `
         <div class="popup-content">
           <img src="${obs.photoUrl}" alt="Observation de tortue">
           ${speciesHtml}
-          <p>${obs.description || 'Aucune description'}</p>
+          ${threatHtml}
+          ${descriptionHtml}
         </div>
       `;
+      // ---- Fin de la reconstruction ----
       marker.bindPopup(popupContent);
+
+        // ATTACHEZ L'ÉVÉNEMENT ICI
+        marker.on('popupopen', () => {
+          setTimeout(() => { // Un petit délai pour s'assurer que le DOM est prêt
+            const link = document.getElementById(speciesLinkId);
+            if (link) {
+              link.addEventListener('click', (e) => {
+                e.preventDefault(); // Empêche le lien de remonter la page
+                this.openSpeciesInfo(obs.species!);
+              });
+            }
+          }, 0);
+        });
 
        // 4. On AJOUTE le marqueur au GROUPE, et non à la carte directement
       this.markersLayer.addLayer(marker);

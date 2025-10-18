@@ -1,0 +1,19 @@
+/* Utilise :host pour cibler le composant lui-même */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Prend 100% de la hauteur de la fenêtre */
+  overflow: hidden; /* Empêche le défilement au niveau de la page principale */
+}
+
+/* Cible le groupe d'onglets pour qu'il remplisse l'espace restant */
+mat-tab-group {
+  flex-grow: 1; /* Fait en sorte que les onglets prennent tout l'espace vertical disponible */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cible le conteneur du contenu des onglets */
+::ng-deep .mat-mdc-tab-body-wrapper {
+  flex-grow: 1;
+}

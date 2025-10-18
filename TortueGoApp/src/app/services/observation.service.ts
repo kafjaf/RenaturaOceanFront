@@ -25,7 +25,12 @@ export class ObservationService {
   }
 
   getObservations(): Observable<ObservationDto[]> {
-    return this.http.get<ObservationDto[]>(this.apiUrl);
+      // === LA SOLUTION EST ICI ===
+    // On ajoute un paramètre de requête aléatoire (ici, le timestamp)
+    // pour que chaque URL soit unique, ce qui force le navigateur
+    // à ignorer son cache et à réellement interroger le serveur.
+    const urlWithCacheBuster = `${this.apiUrl}?_=${new Date().getTime()}`;
+    return this.http.get<ObservationDto[]>(urlWithCacheBuster);
   }
   
   createObservation(formData: FormData): Observable<any> {

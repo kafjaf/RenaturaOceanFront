@@ -1,5 +1,14 @@
 
 <app-toolbar></app-toolbar>
-<app-map-view></app-map-view>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+  <mat-tab label="Carte des Observations">
+    <app-map-view></app-map-view>
+  </mat-tab>
+
+   <mat-tab label="Explorer les Espèces">
+    <!-- Le contenu de l'onglet sera le nouveau composant -->
+    <app-explore></app-explore>
+  </mat-tab>
+</mat-tab-group>
 
 <!-- <router-outlet /> -->

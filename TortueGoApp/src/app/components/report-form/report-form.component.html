@@ -6,6 +6,33 @@
       <textarea matInput formControlName="description"></textarea>
     </mat-form-field>
 
+     <mat-form-field appearance="outline" class="full-width">
+      <mat-label>État de la marée</mat-label>
+      <mat-select formControlName="tideStatus">
+        <mat-option value="Montante">Montante</mat-option>
+        <mat-option value="Basse">Basse</mat-option>
+        <mat-option value="Descendante">Descendante</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Météo</mat-label>
+      <mat-select formControlName="weatherCondition">
+        <mat-option value="Ensoleillé">Ensoleillé</mat-option>
+        <mat-option value="Nuageux">Nuageux</mat-option>
+        <mat-option value="Pluvieux">Pluvieux</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+      <!-- Après la météo -->
+      <label id="threat-label" class="mat-label">Menace observée (optionnel)</label>
+      <mat-radio-group formControlName="threatType" aria-labelledby="threat-label">
+        <mat-radio-button value="Capture accidentelle">Capture accidentelle (filet)</mat-radio-button>
+        <mat-radio-button value="Fibropapillomatose">Fibropapillomatose (tumeurs)</mat-radio-button>
+        <mat-radio-button value="Braconnage">Braconnage</mat-radio-button>
+        <mat-radio-button value="Aucune">Aucune menace visible</mat-radio-button>
+      </mat-radio-group>
+
     <div class="file-input-container">
       <button type="button" mat-stroked-button (click)="fileInput.click()">
         <mat-icon>photo_camera</mat-icon>

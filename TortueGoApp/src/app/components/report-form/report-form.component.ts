@@ -12,6 +12,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import {  MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-report-form',
@@ -26,7 +29,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatToolbarModule],
+    MatToolbarModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatRadioModule
+    ],
   templateUrl: './report-form.component.html',
   styleUrl: './report-form.component.css'
 })
@@ -46,6 +53,9 @@ export class ReportFormComponent implements OnInit {
     this.reportForm = this.fb.group({
       description: [''],
       photo: [null, Validators.required],
+      tideStatus: [''],       // <-- AJOUTER
+      weatherCondition: [''], // <-- AJOUTER
+      threatType: [''] // NOUVEAU CHAMP
     });
   }
 
@@ -70,6 +80,10 @@ export class ReportFormComponent implements OnInit {
     formData.append('longitude', this.data.longitude.toString());
     formData.append('description', this.reportForm.value.description);
     formData.append('photo', this.selectedFile, this.selectedFile.name);
+       // AJOUTER LES NOUVEAUX CHAMPS
+        formData.append('tideStatus', this.reportForm.value.tideStatus);
+        formData.append('weatherCondition', this.reportForm.value.weatherCondition);
+        formData.append('threatType', this.reportForm.value.threatType);
 
     this.observationService.createObservation(formData).subscribe({
       next: () => {

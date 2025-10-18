@@ -1,0 +1,15 @@
+<div class="explore-container">
+  <div class="grid">
+    <mat-card *ngFor="let species of speciesList" class="species-card">
+      <img mat-card-image [src]="species.imageUrl" [alt]="species.name">
+      <mat-card-header>
+        <mat-card-title>{{ species.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" (click)="openSpeciesInfo(species)">
+          EN SAVOIR PLUS
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

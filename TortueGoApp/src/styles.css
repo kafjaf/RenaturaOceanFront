@@ -135,3 +135,48 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .species-info .material-icons {
   font-size: 18px;
 }
+
+   .species-link {
+      color: #3f51b5; /* Couleur du thème */
+      font-weight: bold;
+      text-decoration: none;
+      border-bottom: 1px dotted #3f51b5;
+    }
+    .species-link:hover {
+      text-decoration: underline;
+    }
+
+    /* S'assure que le contrôle des couches de Leaflet est toujours au-dessus des autres éléments */
+.leaflet-control-layers {
+  z-index: 1001 !important; /* Une valeur supérieure au z-index du FAB (1000) */
+}
+
+/* Rend le fond des popups Leaflet sombre et lisible */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background-color: #424242; /* Gris foncé de Material Design */
+  color: #ffffff; /* Texte blanc */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.popup-content p {
+  color: #eeeeee; /* Un blanc un peu plus doux */
+}
+
+/* Assure que la description dans la modale d'info est lisible */
+.mat-dialog-container {
+  color: #ffffff !important;
+}
+
+.threat-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background-color: #fff3e0; /* Un orange très clair */
+        color: #e65100; /* Un orange foncé */
+        font-size: 13px;
+        border-bottom: 1px solid #ffe0b2;
+      }
+      .threat-info .material-icons {
+        font-size: 18px;
+      }
